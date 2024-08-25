@@ -7,7 +7,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js"
 
 /// register user function 
 const registerUser = asyncHandler(async (req, res) => {
-    res.status(200).json({ msg: "ok" })
+    // res.status(200).json({ msg: "ok" })
     const { userName, fullName, email, password } = req.body
     console.log(`email: ${email}`);
     /// check if any field is missing can be check every thing here all validation is possible
@@ -28,7 +28,7 @@ const registerUser = asyncHandler(async (req, res) => {
     }
     // geting local image path
     const avatarLocatPath = req.files?.avatar[0]?.path
-    const coverImageLocalPath = req.files?.coverImage[0]?.path
+    
     ///check if avatar is not empty
     if (!avatarLocatPath) {
         throw new ApiError(400, "avatar is required")
@@ -38,6 +38,14 @@ const registerUser = asyncHandler(async (req, res) => {
     /// check avatar is not empty
     if (!avatar) {
         throw new ApiError(400, "avatar is required")
+    }
+
+    // const coverImageLocalPath = req.files?.coverImage[0]?.path //// this line give error when we will 
+    ////not send the cover image because we are not cheking if cover image is there or not
+
+    let coverImageLocalPath;
+    if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length>0){
+        coverImageLocalPath = req.files.coverImage[0].path
     }
     /// upload coverImage to cloudinary
     const coverImage = await uploadOnCloudinary(coverImageLocalPath)
